@@ -1,5 +1,7 @@
 package com.api.CashWithdrawal;
 
+import java.util.Scanner;
+
 /**
  * @author Pankul
  *
@@ -11,8 +13,9 @@ class Account {
         return balance;
     }
  
-    public void withdraw(int amount){
+    public int withdraw(int amount){
         balance = balance - amount;
+        return balance;
     }
  
 }
@@ -29,29 +32,57 @@ public class ATMWithdrawal implements Runnable {
 		        Thread t2 = new Thread(threadService, "customer 2");
 
 		        t1.start();
-		        t2.start();	   
+		        t2.start();	
+		        
 	}
 		    @Override
 		    public void run() {
-		        for (int i = 0; i < 3; i++) {
-		            withdraw(100);
+		    	Scanner sc = new Scanner(System.in);
+		    	System.out.println("Enter money to be withdrawn for customer : ");
+		         int input = sc.nextInt();
+		        
+		            withdraw(input);
 		            if (account.getBal() < 0) {
-		                System.out.println("account is overdrawn!");
+		                System.out.println("account is overdrawn!");		   
+		        }
+		    }
+		    
+		    public static void countCurrency(int amount){
+		        int[] notes = new int[]{ 2000, 1000, 500, 200, 100};
+		        int[] noteCounter = new int[5];
+		      
+		        for (int i = 0; i < 5; i++) {
+		            if (amount >= notes[i]) {
+		                noteCounter[i] = amount / notes[i];
+		                amount = amount % notes[i];
 		            }
-		   
+		        }
+		      
+		        System.out.println("Currency Count : ");
+		        for (int i = 0; i < 5; i++) {
+		            if (noteCounter[i] != 0) {
+		                System.out.println(notes[i] + " : "
+		                    + noteCounter[i]);
+		            }
 		        }
 		    }
  
 		    public synchronized boolean withdraw(int amount){
 				if (amount > 0) {
-					if (account.getBal() >= amount) {
+					countCurrency(amount);
+					if(amount % 10 != 0) {
+						System.out.println("Amount entered should be multiple of 10");
+						return false;
+					}
+				    else if (account.getBal() >= amount) {
 						System.out.println(Thread.currentThread().getName() + " " + "is try to withdraw");
 						try {
 							Thread.sleep(100);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
-						account.withdraw(amount);
+						int remainingAmount = account.withdraw(amount);
+						System.out.println("Remaining Amount : "+ remainingAmount);
 						System.out.println(Thread.currentThread().getName() + " " + "is complete the withdraw");
 						return true;
 					}

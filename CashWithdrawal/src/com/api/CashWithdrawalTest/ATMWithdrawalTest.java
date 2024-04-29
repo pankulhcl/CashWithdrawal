@@ -42,5 +42,13 @@ public class ATMWithdrawalTest {
   	  boolean result = atm.withdraw(-200);
   	  assertFalse(result);
 	} 
+    
+ // This method is used to check whether entered amount is not multiple of 10
+    @Test
+   	public void testFailMultipleOfTen() throws Exception {
+     	  ATMWithdrawal atm = new ATMWithdrawal();
+     	  boolean result = atm.withdraw(205);
+     	  assertFalse(result);
+   	}
 
 }
